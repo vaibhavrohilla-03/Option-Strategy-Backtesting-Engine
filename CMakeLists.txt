@@ -5,7 +5,7 @@ project(OptionStrategyBacktestingEngine)
 add_executable(${CMAKE_PROJECT_NAME} 
 	"src/main.cpp"
 	"src/Options.cpp"	
-)
+ "include/RandomWalk.h" "src/RandomWalk.cpp" "include/Date.h" "src/Date.cpp")
 
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/")
 

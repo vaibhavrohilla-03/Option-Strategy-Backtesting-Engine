@@ -3,8 +3,6 @@
 #ifndef OPTION_H
 #define OPTION_H
 
-#include <stdio.h>
-
 
 enum OptionType
 {
@@ -16,12 +14,12 @@ class Option
 {
 private:
 	
-	double Strke;
+	double m_Strike;
 	OptionType TypeofOption;
-	double Cost;
+	double m_Cost;
 
 public:
-	Option();
+	Option(double m_Strike,OptionType type, double m_Cost);
 
 	Option(const Option& other);
 
@@ -34,4 +32,4 @@ public:
 
 };
 
-#endif //OPTION_H
+#endif 

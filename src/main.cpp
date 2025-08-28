@@ -1,8 +1,8 @@
 #include <iostream>
-#include "Options.h"
+#include "Date.h"
 
 int main()
 {	
-	std::cout << "program executed";
+
 	return 0;
 }
