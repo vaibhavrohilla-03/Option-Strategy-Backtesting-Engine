@@ -31,3 +31,10 @@ Makefile
 *.exe
 *.so
 *.a
+
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+thirdparty/boost
