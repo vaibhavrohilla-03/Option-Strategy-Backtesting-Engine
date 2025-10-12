@@ -10,6 +10,8 @@
 out/
 [Bb]uild/
 
+data/
+
 # CMake generated files
 CMakeCache.txt
 CMakeFiles/
