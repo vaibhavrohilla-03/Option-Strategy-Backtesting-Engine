@@ -7,6 +7,7 @@
 #include <memory>
 #include <unordered_map>
 #include <utility>
+#include <string>
 
 enum class DataSourceType
 {
@@ -88,7 +89,6 @@ public:
 	std::unique_ptr<DataSource> createDataSource(DataSourceType type, const std::string& source);
 
 };
-
 
 class DataRegister
 {
