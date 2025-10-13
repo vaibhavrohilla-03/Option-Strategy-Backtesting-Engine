@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION "3.19.2")
+cmake_minimum_required(VERSION "3.20")
 
 
 set(CMAKE_CXX_STANDARD 20)
@@ -9,7 +9,7 @@ project(OptionStrategyBacktestingEngine)
 
 if(MSVC)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-    add_compile_options(/std:c++20)
+    #add_compile_options(/std:c++20)
 endif()
 
 add_subdirectory(thirdparty)

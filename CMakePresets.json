@@ -1,0 +1,38 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 23,
+        "patch": 0
+    },
+
+    "configurePresets": [
+        {
+            "name": "ninja-debug",
+            "description": "MSVC x64 Ninja",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/debug",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "cl",
+                "CMAKE_CXX_COMPILER": "cl",
+                "CMAKE_CXX_STANDARD": "20",
+                "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+                "CMAKE_BUILD_TYPE": "Debug"
+            },
+            "vendor": {
+                "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
+                    "hostOS": "Windows"
+                }
+            }
+
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "default",
+            "verbose": true,
+            "configurePreset": "ninja-debug"
+        }
+    ]
+
+}
