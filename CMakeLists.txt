@@ -15,6 +15,7 @@ endif()
 add_subdirectory(thirdparty)
 
 
+
 file(GLOB_RECURSE MY_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 
 add_executable(${CMAKE_PROJECT_NAME} ${MY_SOURCES})
@@ -35,4 +36,10 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     Boost::system
 )
 
+if(MSVC)
+    target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE "/Zc:__cplusplus")
+endif()
 
+
+
+add_subdirectory(scripts)

@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <utility>
 #include <string>
+#include "Options.h"
 
 enum class DataSourceType
 {
@@ -22,24 +23,26 @@ class DataSource
 public:
 
 	virtual ~DataSource() = default;
-	virtual void readData() = 0;
+	virtual std::vector<OptionContract> loadData() = 0;
 };
 
 class CSVDataSource : public DataSource
 {
 public:
 	CSVDataSource(const std::string& path);
-	void readData() override; 
+	std::vector<OptionContract> loadData() override;
 
 private:
 	std::string path;
+	OptionContract parseline(const std::string& line);
 };
 
 class URLDataSource : public DataSource
 {
 public:
 	URLDataSource(const std::string& urlsource);
-	void readData() override;
+	std::vector<OptionContract> loadData() override;
+	
 private:
 	std::string url;
 };

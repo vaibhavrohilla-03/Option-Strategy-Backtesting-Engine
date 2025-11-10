@@ -6,93 +6,74 @@
 #include <map>
 #include <filesystem>
 
+namespace fs = std::filesystem;
+
 std::vector<std::string> split(const std::string& s, char delimiter);
-std::string formatDate(const std::string& dateStr);
 
 int main(int argc, char* argv[]) 
-{
-    if (argc != 3) 
-        return 1;
+{   
 
-    std::string inputFile = argv[1];
-    std::filesystem::path outputDir = argv[2];
+    std::string optionTicker = "NIFTY";
+    std::string directory = "D:\\Quant\\OptionStrategy Backtesting Engine\\data\\nse\\Bhavcopies-raw";
+    std::string outputfile = "D:\\Quant\\OptionStrategy Backtesting Engine\\data\\nse\\options\\" + (optionTicker + ".csv");
 
-    std::ifstream file(inputFile);
-    if (!file.is_open()) 
-        return 1;
+    std::string header = "date,underlying_symbol,underlying_price,option_type,strike,expiration,open,high,low,close,volume,open_interest";
 
-    std::map<std::string, std::ofstream> openFiles;
-    std::string line;
+    std::ofstream output(outputfile);
 
-    std::getline(file, line);
-    const std::string newHeader = "timestamp,underlying,type,strike,expiration,last,volume,open_interest,implied_vol,delta,gamma,theta,vega\n";
+    output << header << "\n";
 
-    while (std::getline(file, line))
-    {
-        std::vector<std::string> columns = split(line, ',');
+    for (const auto& entry : fs::directory_iterator(directory))
+    {   
+        std::string currentfile = entry.path().string();
+        std::string currentline;
 
-        if (columns.size() < 15)
-            continue;
-        
+        std::ifstream fs(currentfile);
 
-        const std::string& instrument = columns[0];
-        if (instrument != "OPTSTK")
-            continue;
-
-        const std::string& symbol = columns[1];
-        const std::string& expiry = columns[2];
-        const std::string& strike = columns[3];
-        const std::string& type = columns[4];
-        const std::string& last = columns[8];
-        const std::string& volume = columns[10];
-        const std::string& open_interest = columns[12];
-        const std::string& timestamp = columns[14];
-
-        std::string fileDate = formatDate(timestamp);
-        std::filesystem::path stockDir = outputDir / symbol;
-        std::filesystem::path outputFile = stockDir / (fileDate + ".csv");
-        std::string outputFilePathStr = outputFile.string();
-
-        if (openFiles.find(outputFilePathStr) == openFiles.end())
+        if (!fs.is_open())
         {
-            try
-            {
-                std::filesystem::create_directories(stockDir);
-            }
-            catch (const std::filesystem::filesystem_error& e)
-            {
-                std::cerr << "Error creating directory " << stockDir << ": " << e.what() << std::endl;
-                continue;
-            }
+            std::cout<< "didn't open";
+            return 1;
+        }
+        std::getline(fs, currentline);
 
-            openFiles[outputFilePathStr].open(outputFile);
-            if (!openFiles[outputFilePathStr].is_open())
-            {
-                std::cerr << "Error: Could not open output file for writing: " << outputFile << std::endl;
-                openFiles.erase(outputFilePathStr);
+        while (std::getline(fs, currentline))
+        {
+            std::vector<std::string> coloumns = split(currentline, ',');
+            
+            if (coloumns.size() < 15)
                 continue;
+
+            const std::string instrument = coloumns[0];
+
+            if (instrument == "OPTIDX" && coloumns[1] == optionTicker)
+            {
+                std::stringstream ss;
+                ss << coloumns[14] << ","
+                    << coloumns[1] << ","
+                    << " " << ","
+                    << coloumns[4] << ","
+                    << coloumns[3] << ","
+                    << coloumns[2] << ","
+                    << coloumns[5] << ","
+                    << coloumns[6] << ","
+                    << coloumns[7] << ","
+                    << coloumns[8] << ","
+                    << coloumns[10] << ","
+                    << coloumns[12] << "," << "\n";
+
+                output << ss.str();
+
+                std::cout << "Wrote" <<  currentline << "\n";
             }
-            openFiles[outputFilePathStr] << newHeader;
         }
 
-        std::stringstream ss;
-        ss << timestamp << ","
-            << symbol << ","
-            << type << ","
-            << strike << ","
-            << expiry << ","
-            << last << ","
-            << volume << ","
-            << open_interest << ","
-            << ",,,," << "\n";
-
-        openFiles[outputFilePathStr] << ss.str();
     }
-    file.close();
-
-    std::cout << "Data successfully processed and written to " << outputDir << std::endl;
+    std::cout << "done";
+    output.close();
 
     return 0;
+
 }
 
 std::vector<std::string> split(const std::string& s, char delimiter)
@@ -106,34 +87,3 @@ std::vector<std::string> split(const std::string& s, char delimiter)
     }
     return tokens;
 }
-
-std::string formatDate(const std::string& dateStr)
-{
-    std::string trimmedDateStr = dateStr;
-    if (!trimmedDateStr.empty() && (trimmedDateStr.back() == '\r' || trimmedDateStr.back() == '\n'))
-    {
-        trimmedDateStr.pop_back();
-    }
-
-    if (trimmedDateStr.length() < 11) return "INVALID_DATE";
-
-    std::string day = trimmedDateStr.substr(0, 2);
-    std::string monthStr = trimmedDateStr.substr(3, 3);
-    std::string year = trimmedDateStr.substr(7, 4);
-
-    std::map<std::string, std::string> monthMap =
-    {
-        {"JAN", "01"}, {"FEB", "02"}, {"MAR", "03"}, {"APR", "04"},
-        {"MAY", "05"}, {"JUN", "06"}, {"JUL", "07"}, {"AUG", "08"},
-        {"SEP", "09"}, {"OCT", "10"}, {"NOV", "11"}, {"DEC", "12"}
-    };
-
-    std::string monthNum = "00";
-    if (monthMap.count(monthStr))
-    {
-        monthNum = monthMap[monthStr];
-    }
-
-    return year + "-" + monthNum + "-" + day;
-}
-

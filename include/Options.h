@@ -1,35 +1,104 @@
 #pragma once
 
-#ifndef OPTION_H
-#define OPTION_H
+#ifndef OPTIONS_H
+#define OPTIONS_H
 
-
-enum OptionType
+#include <chrono>
+#include <iostream>
+#include <string>
+enum class OptionType
 {
 	Option_Call,
 	Option_Put
 };
 
-class Option
+std::ostream& operator<<(std::ostream& os, OptionType type);
+
+
+inline OptionType Type(const std::string& str)
+{
+	if (str == "CE") {
+		return OptionType::Option_Call;
+	}
+	if (str == "PE") {
+		return OptionType::Option_Put;
+	}
+
+	throw std::invalid_argument("Invalid Option type string");
+}
+
+
+
+struct Greeks
+{
+	double delta = 0;
+	double gamma = 0;
+	double theta = 0;
+	double vega = 0;
+	double rho = 0;
+
+};
+
+struct Marketdata
+{	
+	double underlying_price = 0;
+
+	double open = 0;
+	double high = 0;
+	double low = 0;
+	double close = 0;
+	double implied_volatility = 0;
+	long long volume = 0;
+	long long open_interest = 0;
+};
+
+
+class OptionContract
 {
 private:
 	
-	double m_Strike;
+	std::chrono::year_month_day Date;
+
+	double strike_price;
+	
 	OptionType TypeofOption;
-	double m_Cost;
+	std::string symbol;
+
+	std::chrono::year_month_day expiration;
+
+	Marketdata marketdata;
+	Greeks greeks;
 
 public:
-	Option(double m_Strike,OptionType type, double m_Cost);
+	OptionContract() = default;
 
-	Option(const Option& other);
+	OptionContract(std::chrono::year_month_day date, double strike, OptionType type, std::string symbol, std::chrono::year_month_day expiry, Marketdata data, Greeks greeks);
 
-	~Option();
+	~OptionContract() = default;
 
-	Option &operator=(const Option& other);
+	OptionContract &operator=(const OptionContract& other) = default;
+
+	bool operator<(const OptionContract& other);
 
 	double valueAtExpiration(double underlyingAtExpiration);
-	double profitAtExpirtation(double underlyingAtExpiration);
+	double profitAtExpiration(double underlyingAtExpiration);
 
+	const std::chrono::year_month_day& getDate() const { return Date; }
+
+	double getStrike() const { return strike_price; }
+	OptionType getType() const { return TypeofOption; }
+
+	const std::string& getSymbol() const { return symbol; }
+
+	const std::chrono::year_month_day& getExpiration() const { return expiration; }
+
+	const Marketdata& getMarketdata() const { return marketdata; }
+
+	const Greeks& getGreeks() const { return greeks; }
+
+	void setMarketdata(const Marketdata& data){ marketdata = data; }
+
+	void setGreeks(const Greeks& g) {greeks = g;}
 };
 
 #endif 
