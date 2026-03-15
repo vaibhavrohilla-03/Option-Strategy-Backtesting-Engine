@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef STRATEGY_H
-#define STRATEGY_H
-
 #include "Eventhandler.h"
 #include "Event.h"
 
@@ -14,7 +11,5 @@ protected:
 public:
 	Strategy() : eventQueue(nullptr) {}
 
+	
 };
-
-
-#endif

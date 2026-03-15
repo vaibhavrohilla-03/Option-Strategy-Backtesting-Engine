@@ -1,6 +1,10 @@
-#include "DataHandler.h"
 #include <iostream>
 #include <algorithm>
+
+#include "DataHandler.h"
+#include "Options.h"
+#include "DataSourceFactory.h"
+
 DataHandler::DataHandler() : index(0)
 {
 	registerDataSources();

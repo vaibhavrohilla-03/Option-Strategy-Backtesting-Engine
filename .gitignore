@@ -9,6 +9,10 @@
 # Covers the Visual Studio default 'out' and the common manual 'build'
 out/
 [Bb]uild/
+build_autocomplete/
+build_msvc/
+*.ilk
+*.pdb
 
 /data/
 
@@ -40,3 +44,6 @@ Makefile
 *.sln.docstates
 
 thirdparty/boost
+
+.cache/
+compile_commands.json

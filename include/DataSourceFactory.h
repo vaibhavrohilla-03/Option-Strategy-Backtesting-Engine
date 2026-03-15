@@ -1,22 +1,17 @@
 #pragma once
 
-#ifndef DATASOURCEFACTORY_H
-
-#define DATASOURCEFACTORY_H
-
 #include <memory>
 #include <unordered_map>
-#include <utility>
 #include <string>
+
 #include "Options.h"
+
 
 enum class DataSourceType
 {
 	CSV,
 	URL
 };
-
-class DataSourceFactory;
 
 class DataSource
 {	
@@ -95,8 +90,8 @@ public:
 
 class DataRegister
 {
+
 public:
 	explicit DataRegister(DataSourceType type);
-};
 
-#endif
+};

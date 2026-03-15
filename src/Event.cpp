@@ -28,9 +28,11 @@ FillEvent::FillEvent(const std::chrono::year_month_day ts, std::string& sym, int
 double FillEvent::calculatecommision()
 {
 
+	return 0.0;
 }
 
 double FillEvent::calculateslippage()
 {
 
+	return 0.0;
 }

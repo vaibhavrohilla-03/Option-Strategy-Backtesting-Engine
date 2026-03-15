@@ -1,12 +1,10 @@
 #pragma once
-#ifndef EVENT_H
-
-#define EVENT_H
 
 #include <string>
 #include <chrono>
 #include <queue>
 #include <memory>
+
 #include "Options.h"
 
 class Event;
@@ -62,6 +60,7 @@ class SignalEvent : public Event
 private:
 	std::string symbol;
 	SignalType signaltype;
+	
 	int quantity;
 
 public:
@@ -103,4 +102,3 @@ private:
 	double calculateslippage();
 
 };
-#endif

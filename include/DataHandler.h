@@ -1,10 +1,10 @@
 #pragma once
 
-#ifndef DATAHANDLER_H
-#define DATAHANDLER_H
+#include <vector>
+#include <string>
 
-#include "DataSourceFactory.h"
-#include "Options.h"
+class OptionContract;
+enum class DataSourceType;
 
 class DataHandler
 {
@@ -28,6 +28,3 @@ public:
 	size_t getSize() const;
 
 };
-
-
-#endif 

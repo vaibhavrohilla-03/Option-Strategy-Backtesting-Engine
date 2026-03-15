@@ -1,11 +1,9 @@
 #pragma once
 
-#ifndef OPTIONS_H
-#define OPTIONS_H
-
 #include <chrono>
 #include <iostream>
 #include <string>
+
 enum class OptionType
 {
 	Option_Call,
@@ -100,5 +98,3 @@ public:
 
 	void setGreeks(const Greeks& g) {greeks = g;}
 };
-
-#endif 

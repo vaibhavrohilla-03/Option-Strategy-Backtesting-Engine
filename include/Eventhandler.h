@@ -1,12 +1,8 @@
-#pragma once 
-#ifndef EVENTHANDLER_H
-
-
-#define EVENTHANDLER_H
+#pragma once
 
 #include <memory>
 
-class Event;
+#include "Event.h"
 
 class EventHandler
 {
@@ -15,8 +11,7 @@ public:
 	
 	virtual void onEvent(std::shared_ptr<Event> event) = 0;
 
-	virtual void setEventQueue() = 0;
+	virtual void setEventQueue(EventQueue* q) = 0;
 };
 
 
-#endif

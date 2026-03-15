@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef RANDOM_WALK_H
-#define RANDOM_WALK_H
-
 #include <vector>
 
 class RandomWalkGenerator
@@ -27,4 +24,4 @@ public:
 
 	double computeRandomStep(double currentprice);
 };
-#endif 
+
