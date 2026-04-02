@@ -114,4 +114,10 @@ namespace Utils {
 	    return metrics;
 	}
 
+	inline double CalculateROI() {
+
+
+		return 0.0;
+	}
+
 }

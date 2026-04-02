@@ -48,6 +48,9 @@ struct Marketdata
 	double implied_volatility = 0;
 	long long volume = 0;
 	long long open_interest = 0;
+
+	double risk_free_rate = 0;
+	double dividend_yield = 0;
 };
 
 

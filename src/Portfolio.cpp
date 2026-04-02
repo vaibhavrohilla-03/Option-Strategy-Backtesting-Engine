@@ -1,5 +1,5 @@
 #include "Portfolio.h"
 
 
-Portfolio::Portfolio(float capital) : initialcapital(capital) {}
+Portfolio::Portfolio(double capital) : initialcapital(capital) {}
 
