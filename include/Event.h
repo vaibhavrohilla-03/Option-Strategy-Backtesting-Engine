@@ -32,6 +32,14 @@ enum class OrderType
 	Sell
 };
 
+enum class OrderMode 
+{
+	Market,
+	Limit,
+	Stop
+
+};
+
 class Event
 {
 public:
@@ -46,10 +54,9 @@ public:
 
 class MarketEvent : public Event
 {
-private:
+public:
 	std::shared_ptr<OptionContract> contract;
 	
-public:
 	MarketEvent() = default;
 	MarketEvent(const std::chrono::year_month_day& ts, std::shared_ptr<OptionContract> data);
 
@@ -57,47 +64,56 @@ public:
 
 class SignalEvent : public Event
 {
-private:
+public:
 	std::string symbol;
 	SignalType signaltype;
 	
 	int quantity;
 
-public:
+	OrderMode suggestedmode;
+    double limitprice;
+
 	SignalEvent() = default;
-	SignalEvent(const std::chrono::year_month_day ts, std::string& sym, SignalType stype, int qty);
+	SignalEvent(const std::chrono::year_month_day ts, std::string& sym, SignalType stype, int qty, OrderMode mode = OrderMode::Market, double price = 0.0);
 };
 
 class OrderEvent : public Event
 {
-private:
+public:
+	
 	std::string symbol;
 	OrderType ordertype;
 	int quantity;
 
-public:
+	double targetprice; 
+
+	OrderMode ordermode;
+
 	OrderEvent() = default;
-	OrderEvent(const std::chrono::year_month_day ts, std::string& sym, OrderType ordtype,  int qty);
+	OrderEvent(const std::chrono::year_month_day ts, const std::string& sym, OrderType ordtype, OrderMode mode,  int qty, double tprice = 0.0);
 
 
 };
 
 class FillEvent : public Event
 {
-private:
+public:
 
 	std::string symbol;
 	int  quantity;
 	OrderType direction;
 
-public:
+
+	double fillPrice = 0.0;
+
 	double slippage = 0.0;
 	double commision = 0.0;
 
+	int multiplier;
+	
 	FillEvent() = default;
-	FillEvent(const std::chrono::year_month_day ts, std::string& sym, int qty, OrderType orddirection);
+	FillEvent(const std::chrono::year_month_day ts, std::string& sym, int qty, double price, OrderType orddirection, int multplier);
 
-private:
 	double calculatecommision();
 	double calculateslippage();
 

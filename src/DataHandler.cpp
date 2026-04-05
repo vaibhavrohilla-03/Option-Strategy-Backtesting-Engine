@@ -56,3 +56,33 @@ size_t DataHandler::getSize() const
 {
 	return Data.size();
 }
+
+double DataHandler::getLatestPrice(const std::string& symbol)
+{
+	for (int i = index - 1; i >= 0; --i) {
+		if (Data[i].getSymbol() == symbol) {
+			return Data[i].getMarketdata().close;
+		}
+	}
+	return 0.0;
+}
+
+int DataHandler::getMultiplier(const std::string& symbol)
+{
+	for (int i = index - 1; i >= 0; --i) {
+		if (Data[i].getSymbol() == symbol) {
+			return Data[i].getMultiplier();
+		}
+	}
+	return 1; 
+}
+
+OptionContract DataHandler::getContract(const std::string& symbol)
+{
+	for (int i = index - 1; i >= 0; --i) {
+		if (Data[i].getSymbol() == symbol) {
+			return Data[i]; 
+		}
+	}
+	throw std::runtime_error("Contract not found in DataHandler history: " + symbol);
+}

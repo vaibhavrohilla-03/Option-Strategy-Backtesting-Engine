@@ -67,13 +67,15 @@ private:
 
 	std::chrono::year_month_day expiration;
 
+	int multiplier;
+
 	Marketdata marketdata;
 	Greeks greeks;
 
 public:
 	OptionContract() = default;
 
-	OptionContract(std::chrono::year_month_day date, double strike, OptionType type, std::string symbol, std::chrono::year_month_day expiry, Marketdata data, Greeks greeks);
+	OptionContract(std::chrono::year_month_day date, double strike, OptionType type, std::string symbol, std::chrono::year_month_day expiry, int lotsize, Marketdata data, Greeks greeks);
 
 	~OptionContract() = default;
 
@@ -81,23 +83,25 @@ public:
 
 	bool operator<(const OptionContract& other);
 
-	double valueAtExpiration(double underlyingAtExpiration);
-	double profitAtExpiration(double underlyingAtExpiration);
+	double valueAtExpiration(double underlyingAtExpiration) const;
+	double profitAtExpiration(double underlyingAtExpiration) const;
 
-	const std::chrono::year_month_day& getDate() const { return Date; }
+	inline const std::chrono::year_month_day& getDate() const { return Date; }
 
-	double getStrike() const { return strike_price; }
-	OptionType getType() const { return TypeofOption; }
+	inline double getStrike() const { return strike_price; }
+	inline OptionType getType() const { return TypeofOption; }
 
-	const std::string& getSymbol() const { return symbol; }
+	inline const std::string& getSymbol() const { return symbol; }
 
-	const std::chrono::year_month_day& getExpiration() const { return expiration; }
+	inline int getMultiplier() const { return multiplier; }
 
-	const Marketdata& getMarketdata() const { return marketdata; }
+	inline const std::chrono::year_month_day& getExpiration() const { return expiration; }
 
-	const Greeks& getGreeks() const { return greeks; }
+	inline const Marketdata& getMarketdata() const { return marketdata; }
 
-	void setMarketdata(const Marketdata& data){ marketdata = data; }
+	inline const Greeks& getGreeks() const { return greeks; }
 
-	void setGreeks(const Greeks& g) {greeks = g;}
+	inline void setMarketdata(const Marketdata& data){ marketdata = data; }
+
+	inline void setGreeks(const Greeks& g) {greeks = g;}
 };

@@ -67,8 +67,11 @@ OptionContract CSVDataSource::parseline(const std::string& line)
 		std::getline(ss, currentcell, ',');
 		OptionData.dividend_yield = std::stoll(currentcell);
 
+		std::getline(ss, currentcell, ',');
+		int lotSize = std::stoll(currentcell);
 
-		return  OptionContract(Optiondate, OptionStrike, Optiontype, OptionSymbol, expiration, OptionData, Greeks());
+
+		return  OptionContract(Optiondate, OptionStrike, Optiontype, OptionSymbol, expiration, lotSize, OptionData, Greeks());
 	}
 	catch (const std::exception& e)
 	{

@@ -44,8 +44,6 @@ public:
     }
 };
 
-
-
 private:
 
 	double riskFreeRate;

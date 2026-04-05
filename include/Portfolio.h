@@ -5,6 +5,8 @@
 
 #include "Event.h"
 
+class DataHandler;
+
 struct PortfolioHoldings {
 
 	std::chrono::year_month_day timestamp;
@@ -21,6 +23,10 @@ class Portfolio {
 
 private:
 
+	std::shared_ptr<EventQueue> events;
+    
+    std::shared_ptr<DataHandler> data;
+
 	std::chrono::year_month_day startDate = std::chrono::year_month_day{};
 
 	std::chrono::year_month_day endDate = std::chrono::year_month_day{};
@@ -35,11 +41,7 @@ private:
 
 public:
 	
-
-	Portfolio(double capital);
-
-	~Portfolio() = default;
-
+	Portfolio(std::shared_ptr<EventQueue> eventQueue, std::shared_ptr<DataHandler> data, double capital, std::chrono::year_month_day start, std::chrono::year_month_day end);
 
 	void on_signal(std::shared_ptr<SignalEvent> event);
 
@@ -47,13 +49,14 @@ public:
 
 	void UpdatePositions(std::shared_ptr<Event> event);
 
-	void GenerateOrder(std::shared_ptr<SignalEvent> event);
+	std::unique_ptr<OrderEvent> GenerateOrder(std::shared_ptr<SignalEvent> event);
 
 	void UpdateTimeindex(std::shared_ptr<Event> event);
 
 	inline float GetCurrentCapital() const {return currentcapital; }
 
 	void create_equity_dataframe_CSV(const std::string& filepath);
+
 
 
 };

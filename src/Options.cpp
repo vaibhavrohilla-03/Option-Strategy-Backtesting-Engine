@@ -26,16 +26,10 @@ std::ostream& operator<<(std::ostream& os, OptionType type)
 }
 
 
-OptionContract::OptionContract(std::chrono::year_month_day date, double strike, OptionType type, std::string symbol, std::chrono::year_month_day expiry, Marketdata data, Greeks greeks)
-	: Date(date),
-	strike_price(strike),
-	TypeofOption(type),
-	symbol(std::move(symbol)),
-	expiration(expiry),
-	marketdata(data),
-	greeks(greeks)
-{}
-
+OptionContract::OptionContract(std::chrono::year_month_day date, double strike, OptionType type, std::string symbol, 
+	std::chrono::year_month_day expiry, int lotsize, Marketdata data, Greeks greeks)
+	
+	: Date(date), strike_price(strike), TypeofOption(type), symbol(std::move(symbol)), expiration(expiry), multiplier(lotsize), marketdata(data), greeks(greeks) {}
 
 
 bool OptionContract::operator<(const OptionContract& other)
@@ -43,7 +37,7 @@ bool OptionContract::operator<(const OptionContract& other)
 	return this->Date < other.Date;
 }
 
-double OptionContract::valueAtExpiration(double underlyingAtExpiration)
+double OptionContract::valueAtExpiration(double underlyingAtExpiration) const
 {
 	double value = 0.0;
 
@@ -64,7 +58,7 @@ double OptionContract::valueAtExpiration(double underlyingAtExpiration)
 	return value;
 }
 
-double OptionContract::profitAtExpiration(double underlyingAtExpiration)
+double OptionContract::profitAtExpiration(double underlyingAtExpiration) const
 {
 	double finalValue = valueAtExpiration(underlyingAtExpiration);
 	double premiumPaid = marketdata.close; 

@@ -120,4 +120,9 @@ namespace Utils {
 		return 0.0;
 	}
 
+	inline double CalculateAnnualizedVolatility() {
+
+		return 0.0;
+	}
+
 }

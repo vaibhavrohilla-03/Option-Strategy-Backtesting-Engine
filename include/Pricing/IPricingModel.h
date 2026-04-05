@@ -1,3 +1,6 @@
+#pragma once
+
+
 #include "Options.h"
 
 class IPricingModel {
