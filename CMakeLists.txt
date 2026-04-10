@@ -14,7 +14,11 @@ endif()
 
 file(GLOB_RECURSE MY_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 
-add_executable(${CMAKE_PROJECT_NAME} ${MY_SOURCES})
+add_library(${CMAKE_PROJECT_NAME} STATIC ${MY_SOURCES})
+
+target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE 
+    ROOT_DIR="${CMAKE_CURRENT_SOURCE_DIR}/"
+)
 
 target_compile_features(${CMAKE_PROJECT_NAME} PRIVATE cxx_std_20)
 

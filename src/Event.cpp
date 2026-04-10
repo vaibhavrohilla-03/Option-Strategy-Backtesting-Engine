@@ -21,21 +21,9 @@ OrderEvent::OrderEvent(const std::chrono::year_month_day ts, const std::string& 
 	timestamp = ts;
 }
 
-FillEvent::FillEvent(const std::chrono::year_month_day ts, std::string& sym, int qty, double price, OrderType orddirection, int multiplier) 
-					: symbol(sym), quantity(qty), fillPrice(price), direction(orddirection), multiplier(multiplier)
+FillEvent::FillEvent(const std::chrono::year_month_day ts, std::string& sym, int qty, double price, OrderType orddirection, double slippage, double commision, int mlptier)
+					: symbol(sym), quantity(qty), fillPrice(price), direction(orddirection), slippage(slippage), commision(commision), multiplier(mlptier)
 {	
 	type = EventType::FillEvent;
 	timestamp = ts;
-}
-
-double FillEvent::calculatecommision()
-{
-
-	return 0.0;
-}
-
-double FillEvent::calculateslippage()
-{
-
-	return 0.0;
 }

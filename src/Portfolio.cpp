@@ -1,9 +1,10 @@
+#include <fstream>
+
 #include "Portfolio.h"
 #include "DataHandler.h"
 
-Portfolio::Portfolio(std::shared_ptr<EventQueue> eventQueue, std::shared_ptr<DataHandler> marketData, double capital, 
-					std::chrono::year_month_day start, std::chrono::year_month_day end) 
-					: events(eventQueue), data(marketData), initialcapital(capital), startDate(start), endDate(end) { 
+Portfolio::Portfolio(std::shared_ptr<EventQueue> eventQueue, std::shared_ptr<DataHandler> marketData, double capital) 
+					: events(eventQueue), data(marketData), initialcapital(capital) { 
 
 	currentcapital = initialcapital; 
 
@@ -27,14 +28,14 @@ void Portfolio::on_fill(std::shared_ptr<FillEvent> event) {
     double price = event->fillPrice;    
     OrderType direction = event->direction;
 
-    double commission = event->calculatecommision(); 
-    double slippage = event->calculateslippage();
+    double commission = event->commision; 
+    double slippage = event->slippage;
 
     double transactionCost = (quantity * lot_size * price);
 
     if (direction == OrderType::Buy) {
         
-        current_positions[sym] += quantity; // We hold 2 lots
+        current_positions[sym] += quantity; 
         
         currentcapital -= transactionCost;
         currentcapital -= (commission + slippage); 
@@ -164,4 +165,56 @@ void Portfolio::UpdateTimeindex(std::shared_ptr<Event> event) {
 
     all_holdings.push_back(snapshot);
 }
+
+void Portfolio::create_equity_dataframe_CSV(const std::string& filepath) {
+
+	std::ofstream file(filepath);
+
+	if(!file.is_open()) {
+		std::cerr << "Portfolio :: equityDataframe :: file error";
+		return;
+	}
+
+	file << "datetime,cash,commission,total_equity,returns,equity_curve\n";
+
+	double previousTotal = initialcapital;
+
+	for(size_t i = 0; i < all_holdings.size(); ++i) {
+
+		const auto& holding = all_holdings[i];
+
+		double returns = 0.0;
+        if (i == 0) {
+        
+            returns = (holding.total_equity - initialcapital) / initialcapital;
+        } 
+        else {
+            
+            previousTotal = all_holdings[i-1].total_equity;
+            
+            if (previousTotal != 0.0) {
+                returns = (holding.total_equity - previousTotal) / previousTotal;
+            }
+        }
+
+        double equity_curve = holding.total_equity / initialcapital;
+
+        unsigned int y = static_cast<int>(holding.timestamp.year());
+        unsigned int m = static_cast<unsigned>(holding.timestamp.month());
+        unsigned int d = static_cast<unsigned>(holding.timestamp.day());
+
+        file << y << "-" << std::setfill('0') << std::setw(2) << m << "-" << std::setw(2) << d << ","
+             << std::fixed << std::setprecision(4) << holding.cash << ","
+             << holding.commision << ","
+             << holding.total_equity << ","
+             << returns << ","
+             << equity_curve << "\n";
+
+	}
+
+	file.close();
+    std::cout << "Equity curve successfully saved to: " << filepath << std::endl;
+
+}
+
 

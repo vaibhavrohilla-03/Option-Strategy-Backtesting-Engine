@@ -47,3 +47,5 @@ thirdparty/boost
 
 .cache/
 compile_commands.json
+
+strategies/

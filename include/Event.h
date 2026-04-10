@@ -112,9 +112,5 @@ public:
 	int multiplier;
 	
 	FillEvent() = default;
-	FillEvent(const std::chrono::year_month_day ts, std::string& sym, int qty, double price, OrderType orddirection, int multplier);
-
-	double calculatecommision();
-	double calculateslippage();
-
+	FillEvent(const std::chrono::year_month_day ts, std::string& sym, int qty, double price, OrderType orddirection, double slippage, double commision, int mlptier);
 };

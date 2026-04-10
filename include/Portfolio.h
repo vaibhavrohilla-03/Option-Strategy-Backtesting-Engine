@@ -27,10 +27,6 @@ private:
     
     std::shared_ptr<DataHandler> data;
 
-	std::chrono::year_month_day startDate = std::chrono::year_month_day{};
-
-	std::chrono::year_month_day endDate = std::chrono::year_month_day{};
-
 	std::unordered_map<std::string, int> current_positions;
 
 	double initialcapital = 0.0;
@@ -41,7 +37,7 @@ private:
 
 public:
 	
-	Portfolio(std::shared_ptr<EventQueue> eventQueue, std::shared_ptr<DataHandler> data, double capital, std::chrono::year_month_day start, std::chrono::year_month_day end);
+	Portfolio(std::shared_ptr<EventQueue> eventQueue, std::shared_ptr<DataHandler> data, double capital);
 
 	void on_signal(std::shared_ptr<SignalEvent> event);
 
