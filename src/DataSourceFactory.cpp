@@ -32,15 +32,20 @@ OptionContract CSVDataSource::parseline(const std::string& line)
 		OptionData.underlying_price = std::stod(currentcell);
 
 		std::getline(ss, currentcell, ',');
+		std::string typeStr = currentcell;  
 		OptionType Optiontype = Type(currentcell);
 
 		std::getline(ss, currentcell, ',');
+		std::string strikeStr = currentcell;
 		double OptionStrike = std::stod(currentcell);
 
 		std::getline(ss, currentcell, ',');
+		std::string expiryStr = currentcell;
 		std::chrono::year_month_day expiration;
 		std::stringstream expStream(currentcell);
 		expStream >> std::chrono::parse("%d-%b-%Y", expiration);
+
+		std::string uniqueContractSymbol = OptionSymbol + "_" + typeStr + "_" + strikeStr + "_" + expiryStr;
 
 
 		std::getline(ss, currentcell, ',');
@@ -71,7 +76,7 @@ OptionContract CSVDataSource::parseline(const std::string& line)
 		int lotSize = std::stoi(currentcell);
 
 
-		return  OptionContract(Optiondate, OptionStrike, Optiontype, OptionSymbol, expiration, lotSize, OptionData, Greeks());
+		return  OptionContract(Optiondate, OptionStrike, Optiontype, uniqueContractSymbol, OptionSymbol, expiration, lotSize, OptionData, Greeks());
 	}
 	catch (const std::exception& e)
 	{

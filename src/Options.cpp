@@ -26,13 +26,14 @@ std::ostream& operator<<(std::ostream& os, OptionType type)
 }
 
 
-OptionContract::OptionContract(std::chrono::year_month_day date, double strike, OptionType type, std::string symbol, 
+OptionContract::OptionContract(std::chrono::year_month_day date, double strike, OptionType type, std::string symbol, std::string underlying_sym, 
 	std::chrono::year_month_day expiry, int lotsize, Marketdata data, Greeks greeks)
 	
-	: Date(date), strike_price(strike), TypeofOption(type), symbol(std::move(symbol)), expiration(expiry), multiplier(lotsize), marketdata(data), greeks(greeks) {}
+	: Date(date), strike_price(strike), TypeofOption(type), symbol(std::move(symbol)), underlying_symbol(underlying_sym), expiration(expiry), multiplier(lotsize), marketdata(data), greeks(greeks) {}
 
 
 bool OptionContract::operator<(const OptionContract& other)
+const
 {
 	return this->Date < other.Date;
 }

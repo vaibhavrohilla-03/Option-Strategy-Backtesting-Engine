@@ -80,5 +80,5 @@ void Backtester::run() {
 
     std::string filepath = ROOT_DIR + strategy->Strategyname + ".csv";
 
-    portfolio->create_equity_dataframe_CSV(filepath);
+    portfolio->create_equity_dataframe_CSV_and_Metrics(filepath);
 }

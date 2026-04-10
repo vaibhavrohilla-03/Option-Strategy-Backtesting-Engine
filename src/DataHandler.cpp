@@ -77,7 +77,7 @@ int DataHandler::getMultiplier(const std::string& symbol)
 	return 1; 
 }
 
-OptionContract DataHandler::getContract(const std::string& symbol)
+OptionContract& DataHandler::getContract(const std::string& symbol)
 {
     auto it = latest_contract_indices.find(symbol);
     if (it != latest_contract_indices.end()) {

@@ -63,7 +63,11 @@ private:
 	double strike_price;
 	
 	OptionType TypeofOption;
+	
+	std::string underlying_symbol;
+
 	std::string symbol;
+
 
 	std::chrono::year_month_day expiration;
 
@@ -75,13 +79,13 @@ private:
 public:
 	OptionContract() = default;
 
-	OptionContract(std::chrono::year_month_day date, double strike, OptionType type, std::string symbol, std::chrono::year_month_day expiry, int lotsize, Marketdata data, Greeks greeks);
+	OptionContract(std::chrono::year_month_day date, double strike, OptionType type, std::string symbol, std::string underlying_sym, std::chrono::year_month_day expiry, int lotsize, Marketdata data, Greeks greeks);
 
 	~OptionContract() = default;
 
 	OptionContract &operator=(const OptionContract& other) = default;
 
-	bool operator<(const OptionContract& other);
+	bool operator<(const OptionContract& other) const;
 
 	double valueAtExpiration(double underlyingAtExpiration) const;
 	double profitAtExpiration(double underlyingAtExpiration) const;
@@ -92,6 +96,8 @@ public:
 	inline OptionType getType() const { return TypeofOption; }
 
 	inline const std::string& getSymbol() const { return symbol; }
+
+	inline const std::string& getUnderlyingSymbol() const { return underlying_symbol; }
 
 	inline int getMultiplier() const { return multiplier; }
 

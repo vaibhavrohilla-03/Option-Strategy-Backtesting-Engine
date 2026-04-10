@@ -32,6 +32,6 @@ public:
 
 	double getLatestPrice(const std::string& symbol);
 	int getMultiplier(const std::string& symbol);
-	OptionContract getContract(const std::string& symbol);
+	OptionContract& getContract(const std::string& symbol);
 
 };
