@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <unordered_map>
 
 class OptionContract;
 enum class DataSourceType;
@@ -12,6 +13,8 @@ class DataHandler
 private:
 
 	size_t index;
+	std::unordered_map<std::string, size_t> latest_contract_indices;
+	
 	void registerDataSources();
 
 public:

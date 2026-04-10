@@ -7,7 +7,7 @@ MarketEvent::MarketEvent(const std::chrono::year_month_day& ts, std::shared_ptr<
 	timestamp = ts;
 }
 
-SignalEvent::SignalEvent(const std::chrono::year_month_day ts, std::string& sym, SignalType stype, int qty, OrderMode mode, double price)
+SignalEvent::SignalEvent(const std::chrono::year_month_day ts, const std::string& sym, SignalType stype, int qty, OrderMode mode, double price)
 						 : symbol(sym), signaltype(stype), quantity(qty), suggestedmode(mode), limitprice(price)
 {
 	type = EventType::SignalEvent;
@@ -21,7 +21,7 @@ OrderEvent::OrderEvent(const std::chrono::year_month_day ts, const std::string& 
 	timestamp = ts;
 }
 
-FillEvent::FillEvent(const std::chrono::year_month_day ts, std::string& sym, int qty, double price, OrderType orddirection, double slippage, double commision, int mlptier)
+FillEvent::FillEvent(const std::chrono::year_month_day ts, const std::string& sym, int qty, double price, OrderType orddirection, double slippage, double commision, int mlptier)
 					: symbol(sym), quantity(qty), fillPrice(price), direction(orddirection), slippage(slippage), commision(commision), multiplier(mlptier)
 {	
 	type = EventType::FillEvent;

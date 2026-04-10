@@ -15,6 +15,8 @@ struct PortfolioHoldings {
 	double commision = 0.0;
 	double total_equity = 0.0;
 
+	double riskfree_rate = 0.0;
+
 	std::unordered_map<std::string, double> market_value;
 
 };
@@ -32,6 +34,9 @@ private:
 	double initialcapital = 0.0;
 
 	double currentcapital = 0.0;
+
+	double total_commission_paid = 0.0;
+	double total_slippage_paid = 0.0;
 
 	std::vector<PortfolioHoldings> all_holdings;
 
@@ -51,7 +56,7 @@ public:
 
 	inline float GetCurrentCapital() const {return currentcapital; }
 
-	void create_equity_dataframe_CSV(const std::string& filepath);
+	void create_equity_dataframe_CSV_and_Metrics(const std::string& filepath);
 
 
 

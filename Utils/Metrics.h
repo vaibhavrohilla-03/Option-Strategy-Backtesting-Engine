@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <cmath>
-#include "Portfolio.h"
+#include "../include/Portfolio.h"
 
 namespace Utils {
 
@@ -114,15 +114,40 @@ namespace Utils {
 	    return metrics;
 	}
 
-	inline double CalculateROI() {
-
-
-		return 0.0;
+	inline const double CalculateROI(const double initial_capital, const double final_capital) {
+		
+		if (initial_capital == 0.0) return 0.0;
+		
+		return ((final_capital - initial_capital) / initial_capital) * 100.0;
 	}
 
-	inline double CalculateAnnualizedVolatility() {
+	inline const double CalculateCAGR(const double initial_capital, const double final_capital, const double years) {
+		
+		if (initial_capital == 0.0 || years <= 0.0) return 0.0;
+		
+		return (std::pow((final_capital / initial_capital), (1.0 / years)) - 1.0) * 100.0;
+	}
 
-		return 0.0;
+	inline const double CalculateProfitFactor(const std::vector<double>& returns) {
+		double gross_profit = 0.0;
+		double gross_loss = 0.0;
+		
+		for (double ret : returns) {
+
+			if (ret > 0.0) gross_profit += ret;
+			
+			else if (ret < 0.0) gross_loss -= ret; // subtract since ret is negative
+		}
+		if (gross_loss == 0.0) return (gross_profit > 0.0) ? 999.0 : 0.0;
+		
+		return gross_profit / gross_loss;
+	}
+
+	inline const double CalculateAnnualizedVolatility(const std::vector<double>& returns) {
+		double mean = calculateMean(returns);
+		double std_dev = calculateStdDev(returns, mean);
+		
+		return std_dev * std::sqrt(252.0) * 100.0;
 	}
 
 }

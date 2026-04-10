@@ -74,7 +74,7 @@ public:
     double limitprice;
 
 	SignalEvent() = default;
-	SignalEvent(const std::chrono::year_month_day ts, std::string& sym, SignalType stype, int qty, OrderMode mode = OrderMode::Market, double price = 0.0);
+	SignalEvent(const std::chrono::year_month_day ts, const std::string& sym, SignalType stype, int qty, OrderMode mode = OrderMode::Market, double price = 0.0);
 };
 
 class OrderEvent : public Event
@@ -112,5 +112,5 @@ public:
 	int multiplier;
 	
 	FillEvent() = default;
-	FillEvent(const std::chrono::year_month_day ts, std::string& sym, int qty, double price, OrderType orddirection, double slippage, double commision, int mlptier);
+	FillEvent(const std::chrono::year_month_day ts, const std::string& sym, int qty, double price, OrderType orddirection, double slippage, double commision, int mlptier);
 };

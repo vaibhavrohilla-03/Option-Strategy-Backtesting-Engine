@@ -49,7 +49,9 @@ OptionContract DataHandler::getNextOption()
 	if (!hasNextOption())
 		throw std::out_of_range("No options to process in timeline");
 
-	return Data[index++];
+    size_t currentIndex = index++;
+    latest_contract_indices[Data[currentIndex].getSymbol()] = currentIndex;
+	return Data[currentIndex];
 }
 
 size_t DataHandler::getSize() const
@@ -59,30 +61,27 @@ size_t DataHandler::getSize() const
 
 double DataHandler::getLatestPrice(const std::string& symbol)
 {
-	for (int i = index - 1; i >= 0; --i) {
-		if (Data[i].getSymbol() == symbol) {
-			return Data[i].getMarketdata().close;
-		}
-	}
+    auto it = latest_contract_indices.find(symbol);
+    if (it != latest_contract_indices.end()) {
+        return Data[it->second].getMarketdata().close;
+    }
 	return 0.0;
 }
 
 int DataHandler::getMultiplier(const std::string& symbol)
 {
-	for (int i = index - 1; i >= 0; --i) {
-		if (Data[i].getSymbol() == symbol) {
-			return Data[i].getMultiplier();
-		}
-	}
+    auto it = latest_contract_indices.find(symbol);
+    if (it != latest_contract_indices.end()) {
+        return Data[it->second].getMultiplier();
+    }
 	return 1; 
 }
 
 OptionContract DataHandler::getContract(const std::string& symbol)
 {
-	for (int i = index - 1; i >= 0; --i) {
-		if (Data[i].getSymbol() == symbol) {
-			return Data[i]; 
-		}
-	}
+    auto it = latest_contract_indices.find(symbol);
+    if (it != latest_contract_indices.end()) {
+        return Data[it->second];
+    }
 	throw std::runtime_error("Contract not found in DataHandler history: " + symbol);
 }

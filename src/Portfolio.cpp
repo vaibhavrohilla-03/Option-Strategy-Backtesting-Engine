@@ -1,5 +1,6 @@
 #include <fstream>
 
+#include "Metrics.h"
 #include "Portfolio.h"
 #include "DataHandler.h"
 
@@ -30,6 +31,9 @@ void Portfolio::on_fill(std::shared_ptr<FillEvent> event) {
 
     double commission = event->commision; 
     double slippage = event->slippage;
+    
+    total_commission_paid += commission;
+    total_slippage_paid += slippage;
 
     double transactionCost = (quantity * lot_size * price);
 
@@ -140,6 +144,8 @@ void Portfolio::UpdateTimeindex(std::shared_ptr<Event> event) {
 
     if (event->type != EventType::MarketEvent) return;
 
+    auto marketEvent = std::static_pointer_cast<MarketEvent>(event);
+
     PortfolioHoldings snapshot;
     snapshot.timestamp = event->timestamp; 
     snapshot.cash = currentcapital;        
@@ -147,6 +153,8 @@ void Portfolio::UpdateTimeindex(std::shared_ptr<Event> event) {
     snapshot.commision = 0.0; 
 
     double total_market_value = 0.0;
+
+    snapshot.riskfree_rate = (marketEvent->contract->getMarketdata().risk_free_rate) / 100.0;
 
     for (const auto& [sym, qty] : current_positions) {
         
@@ -159,14 +167,22 @@ void Portfolio::UpdateTimeindex(std::shared_ptr<Event> event) {
         snapshot.market_value[sym] = position_value;
         
         total_market_value += position_value;
+
     }
 
     snapshot.total_equity = snapshot.cash + total_market_value;
 
-    all_holdings.push_back(snapshot);
+    if (!all_holdings.empty() && all_holdings.back().timestamp == snapshot.timestamp) {
+        
+        all_holdings.back() = std::move(snapshot);
+    } 
+
+    else {
+        all_holdings.push_back(std::move(snapshot));
+    }
 }
 
-void Portfolio::create_equity_dataframe_CSV(const std::string& filepath) {
+void Portfolio::create_equity_dataframe_CSV_and_Metrics(const std::string& filepath) {
 
 	std::ofstream file(filepath);
 
@@ -178,22 +194,32 @@ void Portfolio::create_equity_dataframe_CSV(const std::string& filepath) {
 	file << "datetime,cash,commission,total_equity,returns,equity_curve\n";
 
 	double previousTotal = initialcapital;
+	double sumRisk = 0.0;
+	
+	std::vector<double> all_returns;
+	all_returns.reserve(all_holdings.size());
 
 	for(size_t i = 0; i < all_holdings.size(); ++i) {
 
 		const auto& holding = all_holdings[i];
+		
+		sumRisk += holding.riskfree_rate;
 
 		double returns = 0.0;
+
         if (i == 0) {
         
             returns = (holding.total_equity - initialcapital) / initialcapital;
+            all_returns.push_back(returns);
         } 
         else {
             
             previousTotal = all_holdings[i-1].total_equity;
             
             if (previousTotal != 0.0) {
+            
                 returns = (holding.total_equity - previousTotal) / previousTotal;
+                all_returns.push_back(returns);
             }
         }
 
@@ -215,6 +241,33 @@ void Portfolio::create_equity_dataframe_CSV(const std::string& filepath) {
 	file.close();
     std::cout << "Equity curve successfully saved to: " << filepath << std::endl;
 
+    double avgRisk = sumRisk / all_holdings.size();
+    avgRisk = avgRisk / 252.0; // 252 trading days
+
+    double sharpe_ratio = Utils::CalculateSharpeRatio(all_returns, avgRisk, 252);
+    Utils::DrawdownMetrics drawdowns = Utils::create_drawdown(all_holdings);
+    
+    double roi = Utils::CalculateROI(initialcapital, currentcapital);
+    double years_traded = all_holdings.size() / 252.0;
+    double cagr = Utils::CalculateCAGR(initialcapital, currentcapital, years_traded);
+    double profit_factor = Utils::CalculateProfitFactor(all_returns);
+
+    double Annual_volitility = Utils::CalculateAnnualizedVolatility(all_returns);
+
+    std::cout << "Initial Capital:    $" << initialcapital << "\n";
+    std::cout << "Final Capital:      $" << currentcapital << "\n";
+    std::cout << "\n";
+    std::cout << "Total ROI:          " << roi << "%\n";
+    std::cout << "CAGR:               " << cagr << "%\n";
+    std::cout << "Sharpe Ratio:       " << sharpe_ratio << "\n";
+    std::cout << "Profit Factor:      " << profit_factor << "\n";
+    std::cout << "Annual Volitility" << Annual_volitility << "\n";
+    std::cout << "\n";
+    std::cout << "Total Commission:   $" << total_commission_paid << "\n";
+    std::cout << "Total Slippage:     $" << total_slippage_paid << "\n";
+    std::cout << "Max Drawdown:       " << drawdowns.max_drawdown_percnt << "%\n";
+    std::cout << "Max Drawdown Dur.:  " << drawdowns.max_duration << " days\n";
+
+
+
 }
-
-
