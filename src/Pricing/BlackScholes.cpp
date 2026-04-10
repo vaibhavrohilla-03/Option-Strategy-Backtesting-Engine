@@ -129,7 +129,7 @@ void BlackScholesModel::calculateGreeks(OptionContract& option) {
     double tolerance = 1e-5;
 
     double impliedVol = Utils::newtonraphson<ImpliedVolFunctor, &ImpliedVolFunctor::getPrice, &ImpliedVolFunctor::getVega>
-                                            (market_price, initial_guess, tolerance, functor);
+                                            (market_price, initial_guess, tolerance, functor, newton_raphson_iterations);
 
    
     if (impliedVol <= 0.0) { impliedVol = 0.0001; }

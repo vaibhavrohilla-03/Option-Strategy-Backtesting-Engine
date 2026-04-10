@@ -5,7 +5,7 @@
 namespace Utils {
 
 	template<typename T, double (T::*Func)(double) const, double (T::*DerivativeFunc)(double) const >
-	double newtonraphson(double target_price, double initialV, double tolerance, const T& root_func, int max_iterations = 100) {
+	double newtonraphson(double target_price, double initialV, double tolerance, const T& root_func, int max_iterations) {
 
 		double fx = (root_func.*Func)(initialV); 
     	double dx = (root_func.*DerivativeFunc)(initialV);
