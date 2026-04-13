@@ -76,7 +76,7 @@ double BlackScholesModel::calculatePrice(const OptionContract& option)  {
     double K = option.getStrike();
     double v = option.getMarketdata().implied_volatility;
 
-    double r = this->riskFreeRate;
+    double r = option.getMarketdata().risk_free_rate / 100.0;
 
     std::chrono::sys_days currentDate = option.getDate();
     std::chrono::sys_days expiryDate = option.getExpiration();
@@ -113,7 +113,7 @@ void BlackScholesModel::calculateGreeks(OptionContract& option) {
     double S = option.getMarketdata().underlying_price;
     double K = option.getStrike();
     double market_price = option.getMarketdata().close;
-    double r = this->riskFreeRate;
+    double r = option.getMarketdata().risk_free_rate / 100.0;
     OptionType type = option.getType();
 
     std::chrono::sys_days currentDate = option.getDate();

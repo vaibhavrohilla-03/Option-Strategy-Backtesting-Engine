@@ -7,6 +7,8 @@
 
 #include "Options.h"
 
+class OptionChain;
+
 class Event;
 using EventQueue = std::queue<std::shared_ptr<Event>>;
 
@@ -55,10 +57,10 @@ public:
 class MarketEvent : public Event
 {
 public:
-	std::shared_ptr<OptionContract> contract;
+	std::shared_ptr<OptionChain> chain;
 	
 	MarketEvent() = default;
-	MarketEvent(const std::chrono::year_month_day& ts, std::shared_ptr<OptionContract> data);
+	MarketEvent(const std::chrono::year_month_day& ts, std::shared_ptr<OptionChain> chain);
 
 };
 

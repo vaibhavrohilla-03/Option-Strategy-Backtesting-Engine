@@ -54,10 +54,12 @@ public:
 
 	void UpdateTimeindex(std::shared_ptr<Event> event);
 
-	inline float GetCurrentCapital() const {return currentcapital; }
+	const std::unordered_map<std::string, int>& getPositions() const { return current_positions; }
+	bool hasPosition(const std::string& symbol) const { return current_positions.count(symbol) > 0; }
+	
+	int getPositionQuantity(const std::string& symbol) const;
+	double getCurrentCapital() const { return currentcapital; }
 
 	void create_equity_dataframe_CSV_and_Metrics(const std::string& filepath);
-
-
 
 };

@@ -1,4 +1,5 @@
 #include "Backtester.h"
+#include "OptionChain.h"
 
 
 Backtester::Backtester(double initial_capital, 
@@ -13,7 +14,7 @@ Backtester::Backtester(double initial_capital,
     
     executionHandler = std::make_shared<ExecutionHandler>(eventQueue.get(), dataHandler, brokerConfig);
 
-    strategy->bindEngineDependencies(eventQueue, dataHandler);
+    strategy->bindEngineDependencies(eventQueue, dataHandler, portfolio);
 }
 
 void Backtester::addData(DataSourceType type, const std::string& path) {
@@ -31,12 +32,12 @@ void Backtester::run() {
 
     std::cout << "Starting Backtest..." << std::endl;
 
-    while (dataHandler->hasNextOption() || !eventQueue->empty()) {
+    while (dataHandler->hasNext() || !eventQueue->empty()) {
         
-        if (eventQueue->empty() && dataHandler->hasNextOption()) {
-            OptionContract nextOption = dataHandler->getNextOption();
-            auto contractPtr = std::make_shared<OptionContract>(nextOption);
-            auto marketEvent = std::make_shared<MarketEvent>(nextOption.getDate(), contractPtr);
+        if (eventQueue->empty() && dataHandler->hasNext()) {
+            const OptionChain& nextChain = dataHandler->getNextChain();
+            auto chainPtr = std::make_shared<OptionChain>(nextChain);
+            auto marketEvent = std::make_shared<MarketEvent>(nextChain.getDate(), chainPtr);
             eventQueue->push(marketEvent);
         }
 
@@ -65,6 +66,7 @@ void Backtester::run() {
                 case EventType::FillEvent: {
                     auto fillEvent = std::static_pointer_cast<FillEvent>(event);
                     portfolio->on_fill(fillEvent);
+                    strategy->onEvent(event);
                     break;
                 }
 

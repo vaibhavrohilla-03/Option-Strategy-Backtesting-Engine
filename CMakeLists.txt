@@ -22,7 +22,7 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
 
 target_compile_features(${CMAKE_PROJECT_NAME} PRIVATE cxx_std_20)
 
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE 
+target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC 
     "${CMAKE_CURRENT_SOURCE_DIR}/include/"
     "${CMAKE_CURRENT_SOURCE_DIR}/Utils/"
     )
@@ -31,3 +31,4 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 #target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC RESOURCES_PATH = "./resources/")
 
 add_subdirectory(scripts)
+add_subdirectory(strategies)

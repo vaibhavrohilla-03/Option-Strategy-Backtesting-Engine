@@ -9,7 +9,7 @@ class BlackScholesModel : public IPricingModel {
 
 public:
 
-	inline BlackScholesModel(double riskRate, int iterations = 100) : riskFreeRate(riskRate), newton_raphson_iterations(iterations) {}
+	inline BlackScholesModel( int iterations = 100) : newton_raphson_iterations(iterations) {}
 
 	double calculatePrice(const OptionContract& option) override;
 
@@ -47,8 +47,6 @@ public:
 private:
 
     int newton_raphson_iterations;
-
-	double riskFreeRate;
 
 	double CDF(double x);
 

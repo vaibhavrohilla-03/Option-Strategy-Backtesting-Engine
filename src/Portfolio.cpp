@@ -1,8 +1,12 @@
 #include <fstream>
 
+#include <iostream>
+#include <iomanip>
+
 #include "Metrics.h"
 #include "Portfolio.h"
 #include "DataHandler.h"
+#include "OptionChain.h"
 
 Portfolio::Portfolio(std::shared_ptr<EventQueue> eventQueue, std::shared_ptr<DataHandler> marketData, double capital) 
 					: events(eventQueue), data(marketData), initialcapital(capital) { 
@@ -62,34 +66,37 @@ void Portfolio::UpdatePositions(std::shared_ptr<Event> event) {
 
 	if (event->type != EventType::MarketEvent) return;
 
+	auto marketEvent = std::static_pointer_cast<MarketEvent>(event);
+	auto& chain = marketEvent->chain;
 	auto current_date = event->timestamp;
 	std::vector<std::string> expired_symbols;
 
 	for (const auto& [sym, qty] : current_positions) {
 		
-		try {
-				const OptionContract& contract = data->getContract(sym);
+		// Try chain first, fall back to DataHandler cache
+		const OptionContract* contract = chain->findBySymbol(sym);
+		if (!contract) {
+			contract = data->getContract(sym);
+		}
+		if (!contract) continue;
 
-			if (current_date >= contract.getExpiration()) {
-				
-				// if the option expired ITM or OTM
-				double underlying_price_at_expiry = contract.getMarketdata().underlying_price;
-				double value_at_expiry = contract.valueAtExpiration(underlying_price_at_expiry);
+		if (current_date >= contract->getExpiration()) {
+			
+			// if the option expired ITM or OTM
+			double underlying_price_at_expiry = contract->getMarketdata().underlying_price;
+			double value_at_expiry = contract->valueAtExpiration(underlying_price_at_expiry);
 
-				if (value_at_expiry > 0.0) {
+			if (value_at_expiry > 0.0) {
 
-                    int multiplier = contract.getMultiplier();
-                    
-                    double settlement_cash = value_at_expiry * qty * multiplier;
-                    
-                    currentcapital += settlement_cash;
-                }
+                int multiplier = contract->getMultiplier();
+                
+                double settlement_cash = value_at_expiry * qty * multiplier;
+                
+                currentcapital += settlement_cash;
+            }
 
-                // Regardless of ITM or OTM, the option has expired and must be removed
-                expired_symbols.push_back(sym);
-			}
-		} catch (const std::exception& e) {
-			continue;
+            // Regardless of ITM or OTM, the option has expired and must be removed
+            expired_symbols.push_back(sym);
 		}
 	}
 
@@ -140,11 +147,20 @@ std::unique_ptr<OrderEvent> Portfolio::GenerateOrder(std::shared_ptr<SignalEvent
 	return std::make_unique<OrderEvent>(event->timestamp, event->symbol, direction, mode, sizing, target_price);
 }
 
+int Portfolio::getPositionQuantity(const std::string& symbol) const {
+    auto it = current_positions.find(symbol);
+    if (it != current_positions.end()) {
+        return it->second;
+    }
+    return 0;
+}
+
 void Portfolio::UpdateTimeindex(std::shared_ptr<Event> event) {
 
     if (event->type != EventType::MarketEvent) return;
 
     auto marketEvent = std::static_pointer_cast<MarketEvent>(event);
+    auto& chain = marketEvent->chain;
 
     PortfolioHoldings snapshot;
     snapshot.timestamp = event->timestamp; 
@@ -154,13 +170,24 @@ void Portfolio::UpdateTimeindex(std::shared_ptr<Event> event) {
 
     double total_market_value = 0.0;
 
-    snapshot.riskfree_rate = (marketEvent->contract->getMarketdata().risk_free_rate) / 100.0;
+    snapshot.riskfree_rate = 0.0;
+    if (!chain->getAllContracts().empty()) {
+        snapshot.riskfree_rate = chain->getAllContracts()[0].getMarketdata().risk_free_rate / 100.0;
+    }
 
     for (const auto& [sym, qty] : current_positions) {
         
-        double latest_price = data->getLatestPrice(sym); 
+        const OptionContract* contract = chain->findBySymbol(sym);
+        double latest_price = 0.0;
+        int multiplier = 1;
 
-        int multiplier = data->getMultiplier(sym);
+        if (contract) {
+            latest_price = contract->getMarketdata().close;
+            multiplier = contract->getMultiplier();
+        } else {
+            latest_price = data->getLatestPrice(sym);
+            multiplier = data->getMultiplier(sym);
+        }
 
         double position_value = qty * latest_price * multiplier;
         
@@ -241,21 +268,23 @@ void Portfolio::create_equity_dataframe_CSV_and_Metrics(const std::string& filep
 	file.close();
     std::cout << "Equity curve successfully saved to: " << filepath << std::endl;
 
+    double final_equity = all_holdings.empty() ? initialcapital : all_holdings.back().total_equity;
+
     double avgRisk = sumRisk / all_holdings.size();
     avgRisk = avgRisk / 252.0; // 252 trading days
 
     double sharpe_ratio = Utils::CalculateSharpeRatio(all_returns, avgRisk, 252);
     Utils::DrawdownMetrics drawdowns = Utils::create_drawdown(all_holdings);
     
-    double roi = Utils::CalculateROI(initialcapital, currentcapital);
+    double roi = Utils::CalculateROI(initialcapital, final_equity);
     double years_traded = all_holdings.size() / 252.0;
-    double cagr = Utils::CalculateCAGR(initialcapital, currentcapital, years_traded);
+    double cagr = Utils::CalculateCAGR(initialcapital, final_equity, years_traded);
     double profit_factor = Utils::CalculateProfitFactor(all_returns);
 
     double Annual_volitility = Utils::CalculateAnnualizedVolatility(all_returns);
 
     std::cout << "Initial Capital:    $" << initialcapital << "\n";
-    std::cout << "Final Capital:      $" << currentcapital << "\n";
+    std::cout << "Final Capital:      $" << final_equity << "\n";
     std::cout << "\n";
     std::cout << "Total ROI:          " << roi << "%\n";
     std::cout << "CAGR:               " << cagr << "%\n";

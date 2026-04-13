@@ -1,6 +1,7 @@
 #include "Event.h"
+#include "OptionChain.h"
 
-MarketEvent::MarketEvent(const std::chrono::year_month_day& ts, std::shared_ptr<OptionContract> data) : contract(data)
+MarketEvent::MarketEvent(const std::chrono::year_month_day& ts, std::shared_ptr<OptionChain> chainData) : chain(chainData)
 {	
 
 	type = EventType::MarketEvent;

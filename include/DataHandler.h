@@ -4,7 +4,10 @@
 #include <string>
 #include <unordered_map>
 
+class OptionChain;
+
 class OptionContract;
+
 enum class DataSourceType;
 
 class DataHandler
@@ -13,25 +16,32 @@ class DataHandler
 private:
 
 	size_t index;
-	std::unordered_map<std::string, size_t> latest_contract_indices;
+
+	std::vector<OptionContract> rawData;
+
+	std::vector<OptionChain> timeline;
+
+	const OptionChain* currentChain = nullptr;
 	
 	void registerDataSources();
+	void buildTimeline();
 
 public:
 
-	std::vector<OptionContract> Data;
 	DataHandler();
 	void addDataSource(DataSourceType type, const std::string& path);
 	void prepareData();
 
-	bool hasNextOption() const;
+	bool hasNext() const;
+	const OptionChain& getNextChain();
 
-	OptionContract getNextOption();
+	size_t getChainCount() const;
+	size_t getTotalContracts() const;
 	
-	size_t getSize() const;
-
 	double getLatestPrice(const std::string& symbol);
+	
 	int getMultiplier(const std::string& symbol);
-	OptionContract& getContract(const std::string& symbol);
+	
+	const OptionContract* getContract(const std::string& symbol);
 
 };
