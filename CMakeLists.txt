@@ -32,3 +32,5 @@ target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC
 
 add_subdirectory(scripts)
 add_subdirectory(strategies)
+add_subdirectory(thirdparty)
+add_subdirectory(bindings)

@@ -43,7 +43,7 @@ Makefile
 *.userosscache
 *.sln.docstates
 
-thirdparty/boost
+thirdparty/pybind11
 
 .cache/
 compile_commands.json
