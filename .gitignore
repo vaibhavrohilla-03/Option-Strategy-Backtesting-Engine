@@ -44,6 +44,7 @@ Makefile
 *.sln.docstates
 
 thirdparty/pybind11
+thirdparty/pybind11-stubgen
 
 .cache/
 compile_commands.json
