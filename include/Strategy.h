@@ -24,7 +24,7 @@ protected:
     std::shared_ptr<DataHandler> m_dataHandler;
 	std::shared_ptr<Portfolio> m_portfolio;
 
-	void pushSignal(std::shared_ptr<SignalEvent> signal) {
+	inline void pushSignal(std::shared_ptr<SignalEvent> signal) {
 		m_eventQueue->push(signal);
 	}
 

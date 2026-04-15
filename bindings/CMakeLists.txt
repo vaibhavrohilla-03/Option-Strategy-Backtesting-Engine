@@ -1,6 +1,8 @@
 find_package(Python COMPONENTS Interpreter Development.Module REQUIRED)
 
-pybind11_add_module(py_backtester bindings.cpp)
+file(GLOB BINDING_SOURCES "*.cpp")
+
+pybind11_add_module(py_backtester ${BINDING_SOURCES})
 
 target_link_libraries(py_backtester PRIVATE ${CMAKE_PROJECT_NAME})
 
@@ -17,6 +19,5 @@ add_custom_command(TARGET py_backtester POST_BUILD
         
     ${Python_EXECUTABLE} -m pybind11_stubgen py_backtester -o "${CMAKE_SOURCE_DIR}/strategies"
     
-    COMMENT "Auto-generating pybind11 stubs (.pyi) into strategies/ folder..."
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
