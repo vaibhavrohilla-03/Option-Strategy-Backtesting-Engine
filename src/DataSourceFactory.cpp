@@ -23,7 +23,7 @@ OptionContract CSVDataSource::parseline(const std::string& line)
 	{
 		std::chrono::year_month_day Optiondate;
 		std::stringstream dateStream(currentcell);
-		dateStream >> std::chrono::parse("%d-%b-%Y", Optiondate);
+		dateStream >> std::chrono::parse("%d-%b-%y", Optiondate);
 
 		std::getline(ss, currentcell, ',');
 		std::string OptionSymbol = currentcell;
@@ -43,7 +43,7 @@ OptionContract CSVDataSource::parseline(const std::string& line)
 		std::string expiryStr = currentcell;
 		std::chrono::year_month_day expiration;
 		std::stringstream expStream(currentcell);
-		expStream >> std::chrono::parse("%d-%b-%Y", expiration);
+		expStream >> std::chrono::parse("%d-%b-%y", expiration);
 
 		std::string uniqueContractSymbol = OptionSymbol + "_" + typeStr + "_" + strikeStr + "_" + expiryStr;
 

@@ -3,7 +3,6 @@
 
 #include "DataHandler.h"
 #include "Options.h"
-#include "OptionChain.h"
 #include "DataSourceFactory.h"
 
 DataHandler::DataHandler() : index(0)

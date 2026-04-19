@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <functional>
 
 using CommissionModel = std::function<double(int, double, int)>;

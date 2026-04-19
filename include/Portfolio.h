@@ -38,7 +38,13 @@ private:
 	double total_commission_paid = 0.0;
 	double total_slippage_paid = 0.0;
 
+	double pending_commission = 0.0;
+
 	std::vector<PortfolioHoldings> all_holdings;
+
+	void create_equity_dataframe_CSV_and_Metrics(const std::string& filepath);
+
+	friend class Backtester;
 
 public:
 	
@@ -60,6 +66,5 @@ public:
 	int getPositionQuantity(const std::string& symbol) const;
 	double getCurrentCapital() const { return currentcapital; }
 
-	void create_equity_dataframe_CSV_and_Metrics(const std::string& filepath);
 
 };

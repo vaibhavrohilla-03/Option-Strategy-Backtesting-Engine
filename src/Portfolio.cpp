@@ -39,6 +39,8 @@ void Portfolio::on_fill(std::shared_ptr<FillEvent> event) {
     total_commission_paid += commission;
     total_slippage_paid += slippage;
 
+    pending_commission += commission;
+
     double transactionCost = (quantity * lot_size * price);
 
     if (direction == OrderType::Buy) {
@@ -73,12 +75,13 @@ void Portfolio::UpdatePositions(std::shared_ptr<Event> event) {
 
 	for (const auto& [sym, qty] : current_positions) {
 		
-		// Try chain first, fall back to DataHandler cache
 		const OptionContract* contract = chain->findBySymbol(sym);
-		if (!contract) {
+		
+        if (!contract) {
 			contract = data->getContract(sym);
 		}
-		if (!contract) continue;
+		
+        if (!contract) continue;
 
 		if (current_date >= contract->getExpiration()) {
 			
@@ -166,7 +169,8 @@ void Portfolio::UpdateTimeindex(std::shared_ptr<Event> event) {
     snapshot.timestamp = event->timestamp; 
     snapshot.cash = currentcapital;        
     
-    snapshot.commision = 0.0; 
+    snapshot.commision = pending_commission;
+    pending_commission = 0.0;
 
     double total_market_value = 0.0;
 

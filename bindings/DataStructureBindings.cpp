@@ -2,6 +2,9 @@
 #include "Options.h"
 #include "OptionChain.h"
 #include <pybind11/operators.h>
+#include <pybind11/stl.h>
+
+#include "ChronoCast.h"
 
 namespace bindings {
 
@@ -31,6 +34,8 @@ namespace bindings {
         py::class_<OptionContract>(m, "OptionContract")
             .def(py::init<>())
             .def(py::self < py::self)
+            .def("value_at_expiration", &OptionContract::valueAtExpiration)
+            .def("profit_at_expiration", &OptionContract::profitAtExpiration)
             .def_property_readonly("date", &OptionContract::getDate)
             .def_property_readonly("strike", &OptionContract::getStrike)
             .def_property_readonly("type", &OptionContract::getType)
@@ -38,17 +43,26 @@ namespace bindings {
             .def_property_readonly("underlying_symbol", &OptionContract::getUnderlyingSymbol)
             .def_property_readonly("multiplier", &OptionContract::getMultiplier)
             .def_property_readonly("expiration", &OptionContract::getExpiration)
-            .def_property_readonly("marketdata", &OptionContract::getMarketdata)
-            .def_property_readonly("greeks", &OptionContract::getGreeks);
+
+            .def_property("marketdata", &OptionContract::getMarketdata, &OptionContract::setMarketdata)
+            .def_property("greeks", &OptionContract::getGreeks, &OptionContract::setGreeks);
 
         py::class_<OptionChain, std::shared_ptr<OptionChain>>(m, "OptionChain")
+            .def(py::init<std::chrono::year_month_day, std::vector<OptionContract>>())
             .def_property_readonly("date", &OptionChain::getDate)
-            .def("get_contracts", &OptionChain::getContracts)
+            .def("get_all_contracts", &OptionChain::getAllContracts, py::return_value_policy::reference_internal)
+            .def("get_contracts", &OptionChain::getContracts, py::return_value_policy::reference_internal)
+            .def("get_contracts_by_strike_range", &OptionChain::getContractsByStrikeRange, py::return_value_policy::reference_internal)
             .def("get_available_expiries", &OptionChain::getAvailableExpiries)
             .def("get_available_strikes", &OptionChain::getAvailableStrikes)
             .def("get_atm", &OptionChain::getATM, py::return_value_policy::reference_internal)
             .def("get_underlying_price", &OptionChain::getUnderlyingPrice)
-            .def("find_contract", py::overload_cast<double, OptionType, std::chrono::year_month_day>(&OptionChain::findContract, py::const_), py::return_value_policy::reference_internal)
+            .def("find_contract", &OptionChain::findContract, py::return_value_policy::reference_internal)
             .def("find_by_symbol", py::overload_cast<const std::string&>(&OptionChain::findBySymbol, py::const_), py::return_value_policy::reference_internal);
     }
 }
+
+
+
+
+

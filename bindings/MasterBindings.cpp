@@ -1,6 +1,6 @@
 #include "Bindings.h"
 
-PYBIND11_MODULE(py_backtester, m, pybind11::mod_gil_not_used()) {
+PYBIND11_MODULE(py_backtester, m) {
     
     PyDateTime_IMPORT;
 

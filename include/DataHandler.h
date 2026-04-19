@@ -4,9 +4,7 @@
 #include <string>
 #include <unordered_map>
 
-class OptionChain;
-
-class OptionContract;
+#include "OptionChain.h"
 
 enum class DataSourceType;
 
