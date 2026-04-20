@@ -8,6 +8,8 @@
 
 CSVDataSource::CSVDataSource(const std::string& path) : path(path) {}
 
+
+
 OptionContract CSVDataSource::parseline(const std::string& line)
 {
 	Marketdata OptionData;

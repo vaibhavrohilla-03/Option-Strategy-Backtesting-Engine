@@ -13,6 +13,16 @@ target_include_directories(nlohmann_json INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/
 add_library(cpp-httplib INTERFACE)
 target_include_directories(cpp-httplib INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty")
 
+target_compile_definitions(cpp-httplib INTERFACE CPPHTTPLIB_OPENSSL_SUPPORT)
+
+if(MSVC)
+    set(OPENSSL_ROOT_DIR "C:/Program Files/OpenSSL-Win64")
+elseif(MINGW)
+    set(OPENSSL_ROOT_DIR "C:/msys64/mingw64")
+endif()
+
+
+find_package(OpenSSL REQUIRED)
 
 if(MSVC)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
@@ -23,9 +33,11 @@ file(GLOB_RECURSE MY_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/
 
 add_library(${CMAKE_PROJECT_NAME} STATIC ${MY_SOURCES})
 
-target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC 
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     nlohmann_json
-    cpp-httplib)
+    cpp-httplib
+    OpenSSL::SSL
+    OpenSSL::Crypto)
 
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE 
     ROOT_DIR="${CMAKE_CURRENT_SOURCE_DIR}/"
