@@ -2,7 +2,6 @@
 
 #include <memory>
 #include <string>
-
 #include "Event.h"
 #include "DataHandler.h"
 #include "Strategy.h"
@@ -13,6 +12,7 @@
 
 class Backtester {
 private:
+
     std::shared_ptr<EventQueue> eventQueue;
     std::shared_ptr<DataHandler> dataHandler;
     std::shared_ptr<Strategy> strategy;

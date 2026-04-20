@@ -7,6 +7,13 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 project(OptionStrategyBacktestingEngine)
 
+add_library(nlohmann_json INTERFACE)
+target_include_directories(nlohmann_json INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty")
+
+add_library(cpp-httplib INTERFACE)
+target_include_directories(cpp-httplib INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty")
+
+
 if(MSVC)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     #add_compile_options(/std:c++20)
@@ -15,6 +22,10 @@ endif()
 file(GLOB_RECURSE MY_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 
 add_library(${CMAKE_PROJECT_NAME} STATIC ${MY_SOURCES})
+
+target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC 
+    nlohmann_json
+    cpp-httplib)
 
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE 
     ROOT_DIR="${CMAKE_CURRENT_SOURCE_DIR}/"
