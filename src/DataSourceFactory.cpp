@@ -211,7 +211,7 @@ URLDataSource::URLDataSource(const std::string& urlsource) : url(urlsource)
 std::string URLDataSource::fetchAndCache()
 {
 
-    const std::string cache_dir = std::string(ROOT_DIR) + "data/nse/options/" + ticker;
+    const std::string cache_dir = std::string(ROOT_DIR) + "data/options/" + ticker;
     std::filesystem::create_directories(cache_dir);
 
     const std::string cache_file = cache_dir + "/" + ticker + "_" + start_date + "_" + end_date + ".csv";
