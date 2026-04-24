@@ -35,11 +35,18 @@ private:
 class URLDataSource : public DataSource
 {
 public:
+	
 	URLDataSource(const std::string& urlsource);
 	std::vector<OptionContract> loadData() override;
 	
 private:
+	
 	std::string url;
+	std::string ticker;
+	std::string start_date;
+	std::string end_date;
+
+	std::string fetchAndCache();
 };
 
 

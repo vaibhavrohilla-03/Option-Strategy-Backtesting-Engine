@@ -1,4 +1,6 @@
 #include "OptionChain.h"
+
+#include <algorithm>
 #include <cmath>
 #include <limits>
 
@@ -47,22 +49,12 @@ std::vector<std::chrono::year_month_day> OptionChain::getAvailableExpiries() con
 
 	std::vector<std::chrono::year_month_day> query;
 
-	std::chrono::year_month_day last = chain[0].getExpiration();
-	query.push_back(last);
-
-
 	for(const auto& contract : chain) {
-
-		auto date = contract.getExpiration();
-
-		if(date != last) {
-			
-			query.push_back(date);
-			last = date;
-
-		}
-
+		query.push_back(contract.getExpiration());
 	}
+
+    std::sort(query.begin(), query.end());
+    query.erase(std::unique(query.begin(), query.end()), query.end());
 
 	return query;
 

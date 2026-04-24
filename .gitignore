@@ -50,3 +50,5 @@ thirdparty/pybind11-stubgen
 compile_commands.json
 
 strategies/
+
+config.json
